@@ -12,18 +12,16 @@ const dirs = {
 }
 
 
-
 // Copy html
 gulp.task('copyHtml', () => {
-    gulp.src(dirs.src+'*.html')
-    .pipe(gulp.dest(dirs.dest))
+    gulp.src(`${dirs.src}*.html`)
+    .pipe(gulp.dest(`${dirs.dest}`))
 })
-
 
 
 // Compile and concatenate es6 to regular old javascript
 gulp.task('buildJs', () => {
-	return gulp.src(dirs.src+'js/**/*.js')
+	return gulp.src(`${dirs.src}js/**/*.js`)
 		.pipe(sourcemaps.init())
 		.pipe(babel({
 			presets: ['es2015'],
@@ -31,9 +29,8 @@ gulp.task('buildJs', () => {
 		}))
 		.pipe(concat('bundle.js'))
 		.pipe(sourcemaps.write('.'))
-		.pipe(gulp.dest(dirs.dest+'js'))
+		.pipe(gulp.dest( `${dirs.dest}js`))
 })
-
 
 
 // Set up local server from in dist directory
@@ -47,18 +44,9 @@ gulp.task('serve', () => {
 })
 
 
-
 // Default tasks
 gulp.task('default', ['copyHtml','buildJs','serve'], () => {
-	gulp.watch(dirs.src+'js/**/*.js', ['buildJs'])
-	gulp.watch(dirs.src+'*.html', ['copyHtml'])
-	gulp.watch([dirs.dest+'**/*.*']).on('change', browserSync.reload)
+	gulp.watch(`${dirs.src}js/**/*.js`, ['buildJs'])
+	gulp.watch(`${dirs.src}*.html`, ['copyHtml'])
+	gulp.watch([`${dirs.dest}**/*.*`]).on('change', browserSync.reload)
 })
-
-
-
-
-
-
-
-

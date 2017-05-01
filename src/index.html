@@ -11,11 +11,9 @@
 </style>
 
 <body>   
-
     <div>
         <h1>Bee Slap</h1>
-
-        <table id="js-bees">
+        <table>
             <thead>
                 <tr>
                     <th>TYPE</th>
@@ -23,26 +21,23 @@
                     <th>STATUS</th>
                 </tr>
             </thead>
-            <tbody>
-
+            <tbody id="js-bee-rows">
             </tbody>
         </table>
-
         <button id="js-btn-hit">Slap</button>
         <button id="js-btn-reset">Reset</button>
-
-        <p id="js-dead-bee-msg" class="hide">That bee is already dead, slap another</p>
-
-        <div class="hide" id="js-status">
+        <p id="js-dead-bee-msg" class="js-msg hide">That bee is already dead, slap another</p>
+        <div id="js-status" class="hide js-msg">
             <h2>Status</h2>
-            <p>A <span id="type"></span> was slapped and lost <span id="health-lost"></span> points. It has <span id="health-remaining"></span> health points remaining.</p>
+            <p>A <span id="js-status-type"></span> was slapped and lost <span id="js-status-health-lost"></span> points. It has <span id="js-status-health-remaining"></span> health points remaining.</p>
         </div>
-
     </div>
-    
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="js/bundle.js"></script>
-
+    <script>
+        //set up new bees
+        newBees()
+        //output html
+        outPutHtml(bees)
+    </script>
 </body>
-
 </html>

@@ -1,52 +1,58 @@
-// Set some variables
-var beeTypes = {
+// Types of bees
+const beeTypes = {
 		Queen  : {health : 100, hitDamage:7, needed: 3},
 		Worker : {health : 75, hitDamage: 12, needed: 5},
 		Drone  : {health : 50, hitDamage: 18, needed : 7}
-	},
-	bees = [],
-	newBee;
+}
 
+// Small swarm for testing
+// const beeTypes = {
+// 		Queen  : {health : 100, hitDamage:50, needed: 1},
+// 		Worker : {health : 75, hitDamage: 75, needed: 1},
+// 		Drone  : {health : 50, hitDamage: 50, needed : 1}
+// }
+
+// To hold the swarm
+let bees = [] 
 
 
 // The basic bee 
 function Bee(type, health, hitDamage) {
-    this.type = type;
-    this.health = health;
-    this.hitDamage = hitDamage;
-    this.status = "alive";
+    this.type = type
+    this.health = health
+    this.hitDamage = hitDamage
+    this.status = "alive"
     this.doDamage = function() {
-    	this.health -= this.hitDamage;
+    	this.health -= this.hitDamage
     	if (this.health <= 0 ){
-    		this.status = "dead";
+    		this.status = "dead"
+    		this.health = 0
     	}
-    };
+    }
 }
 
 
 
 // Set up new bees
 function newBees(){
-	// Push each bee into array
-	$.each( beeTypes, function(index) {
-		for (var i = 0; i < this.needed; i++) {
-			newBee = new Bee (index, this.health, this.hitDamage);
-			bees.push(newBee);
-		}
-	});
+	for (const prop in beeTypes) {
+		const thisBee = beeTypes[prop]
+		for (let i = 0; i < thisBee.needed; i++) {
+			bees.push(new Bee (prop, thisBee.health, thisBee.hitDamage))
+		}	
+  	}
 }
 
 
 
 // Output bees to page
 function outPutHtml(bees){
-	var html = "";
-	for (var i = 0; i < bees.length; i++) {		
-		html += "<tr><td>"+bees[i].type+"</td><td>"+bees[i].health+"</td><td>"+bees[i].status+"</td></tr>"
+	let beeRows = ""
+	for (let i = 0; i < bees.length; i++) {		
+		beeRows +=`<tr><td>${bees[i].type}</td><td>${bees[i].health}</td><td>${bees[i].status}</td><tr>`
 	}
-	$("#js-bees tbody").empty().append(html);
+	document.getElementById("js-bee-rows").innerHTML = beeRows
 }
-
 
 
 // Slap the bee
@@ -56,70 +62,97 @@ function slapThatBee(beeToSlap) {
 	// To do - Check against number of queens in array rather than hard coded number
 	//       - Remove bee from array when dead so it's not slapped again
 	if (checkQueens() !== 3){
-		var currentBee = bees[beeToSlap];
+
+		let currentBee = bees[beeToSlap]
 		if (currentBee.status === "alive"){
-			currentBee.doDamage();
-			statusUpdate(currentBee);
-			$("#js-dead-bee-msg").addClass('hide');
+			currentBee.doDamage()
+			statusUpdate(currentBee)
+			addClass(document.getElementById("js-dead-bee-msg"), 'hide')
 		}else{
-			$("#js-dead-bee-msg").removeClass('hide');
+			removeClass(document.getElementById("js-dead-bee-msg"), 'hide')
 		}
+
 	}else{
 		// If all the queens are dead, so are the rest
-		for (var i = 0; i < bees.length; i++) {	
-			bees[i].status = "dead";
+		for (let i = 0; i < bees.length; i++) {	
+			bees[i].status = "dead"
 		}
-		$("#js-dead-bee-msg").removeClass("hide").text("They all dead");
-		$("#js-btn-hit").attr("disabled", true);
+		
+		removeClass(document.getElementById("js-dead-bee-msg"), 'hide')
+		document.getElementById("js-dead-bee-msg").textContent = 'They all dead'
+		document.getElementById("js-btn-hit").addAttribute("disabled")
+
 	}
-	outPutHtml(bees);
+
+	outPutHtml(bees)
 }
 
 
 
 // Check for dead Queens
 function checkQueens(){
-	var deadQueens = 0;
-	for (var i = 0; i < bees.length; i++) {
+	let deadQueens = 0
+	for (let i = 0; i < bees.length; i++) {
 		if(bees[i].type === "Queen" && bees[i].status === "dead" ){
-			deadQueens ++;
+			deadQueens ++
 		}
 	}
-	return deadQueens;
+	return deadQueens
 }
-
 
 
 // Feedback which bee was just slapped
 function statusUpdate(slappedBee){
-	$("#js-status #type").text(slappedBee.type);
-	$("#js-status #health-lost").text(slappedBee.hitDamage);
-	$("#js-status #health-remaining").text(slappedBee.health);
-	$("#js-status").removeClass("hide");
+	document.getElementById("js-status-type").textContent = slappedBee.type
+	document.getElementById("js-status-health-lost").textContent = slappedBee.hitDamage
+	document.getElementById("js-status-health-remaining").textContent = slappedBee.health
+	removeClass(document.getElementById("js-status"), 'hide')
 }
 
 
+// Adding and removing classes
+// From: https://jaketrent.com/post/addremove-classes-raw-javascript/
+function hasClass(el, className) {
+  if (el.classList)
+    return el.classList.contains(className)
+  else
+    return !!el.className.match(new RegExp('(\\s|^)' + className + '(\\s|$)'))
+}
 
-$(document).ready(function($) {
 
-	//set up new bees
-	newBees();
+function addClass(el, className) {
+  if (el.classList)
+    el.classList.add(className)
+  else if (!hasClass(el, className)) el.className += " " + className
+}
 
-	//output html
-	outPutHtml(bees);
 
-	// Hit button
-	$( "#js-btn-hit" ).on( "click", function() {
-		// Choose a bee at randon from the array to slap
-		slapThatBee(Math.floor(Math.random()*bees.length));
-	});
+function removeClass(el, className) {
+  if (el.classList)
+    el.classList.remove(className)
+  else if (hasClass(el, className)) {
+    var reg = new RegExp('(\\s|^)' + className + '(\\s|$)')
+    el.className=el.className.replace(reg, ' ')
+  }
+}
 
-	$( "#js-btn-reset" ).on( "click", function() {
-		bees = []; // empty bees array
-		newBees(); // new bees please
-		outPutHtml(bees);
-		$("#js-status, #js-dead-bee-msg").addClass("hide");
-		$("#js-btn-hit").attr("disabled", false);
-	});
 
-});
+// Slap bee button
+const slapBeeButton = document.getElementById('js-btn-hit')
+slapBeeButton.addEventListener('click', e => { 
+	slapThatBee(Math.floor(Math.random()*bees.length))
+})
+
+
+// Reset button
+const resetButton = document.getElementById('js-btn-reset')
+resetButton.addEventListener('click', e => { 
+	bees = [] // empty bees array
+	newBees() // new bees please
+	outPutHtml(bees) // reset the stage
+	document.getElementById("js-btn-hit").removeAttribute("disabled")
+	let messages = document.getElementsByClassName("js-msg")
+	for(let i = 0; i < messages.length; i++){
+		messages[i].classList.add("hide")
+	}
+})
