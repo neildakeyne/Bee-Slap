@@ -5,12 +5,6 @@ const beeTypes = {
 		Drone  : {health : 50, hitDamage: 18, needed : 7}
 }
 
-// Small swarm for testing
-// const beeTypes = {
-// 		Queen  : {health : 100, hitDamage:50, needed: 1},
-// 		Worker : {health : 75, hitDamage: 75, needed: 1},
-// 		Drone  : {health : 50, hitDamage: 50, needed : 1}
-// }
 
 // To hold the swarm
 let bees = [] 
@@ -32,7 +26,6 @@ function Bee(type, health, hitDamage) {
 }
 
 
-
 // Set up new bees
 function newBees(){
 	for (const prop in beeTypes) {
@@ -42,7 +35,6 @@ function newBees(){
 		}	
   	}
 }
-
 
 
 // Output bees to page
@@ -58,17 +50,17 @@ function outPutHtml(bees){
 // Slap the bee
 function slapThatBee(beeToSlap) {
 
-	// Check if all the Queens are dead
-	// To do - Check against number of queens in array rather than hard coded number
-	//       - Remove bee from array when dead so it's not slapped again
+	// Check if all the Queens are dead	
 	if (checkQueens() !== 3){
 
 		let currentBee = bees[beeToSlap]
+
 		if (currentBee.status === "alive"){
 			currentBee.doDamage()
 			statusUpdate(currentBee)
 			addClass(document.getElementById("js-dead-bee-msg"), 'hide')
 		}else{
+			// If bee is dead show msg to slap another
 			removeClass(document.getElementById("js-dead-bee-msg"), 'hide')
 		}
 
@@ -138,15 +130,14 @@ function removeClass(el, className) {
 
 
 // Slap bee button
-const slapBeeButton = document.getElementById('js-btn-hit')
-slapBeeButton.addEventListener('click', e => { 
-	slapThatBee(Math.floor(Math.random()*bees.length))
-})
+ document.getElementById('js-btn-hit').addEventListener('click', e => {
+	let aliveBees = bees.filter(bee => bee.status === 'alive')
+	slapThatBee(Math.floor(Math.random()*aliveBees.length))
+ })
 
 
 // Reset button
-const resetButton = document.getElementById('js-btn-reset')
-resetButton.addEventListener('click', e => { 
+ document.getElementById('js-btn-reset').addEventListener('click', e => {
 	bees = [] // empty bees array
 	newBees() // new bees please
 	outPutHtml(bees) // reset the stage
@@ -155,4 +146,6 @@ resetButton.addEventListener('click', e => {
 	for(let i = 0; i < messages.length; i++){
 		messages[i].classList.add("hide")
 	}
-})
+ })
+
+
