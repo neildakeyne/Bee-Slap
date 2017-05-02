@@ -15,4 +15,4 @@ $ gulp
 ```
 ## Demo
 A working version can be seen here:
-https://neildakeyne.co.uk/bee-slap
+http://neildakeyne.co.uk/bee-slap
