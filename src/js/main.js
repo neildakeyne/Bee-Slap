@@ -1,18 +1,18 @@
 (function(){
 
 	// Types of bees
-	const beeTypes = {
-			Queen  : {health : 100, hitDamage:7, needed: 3},
-			Worker : {health : 75, hitDamage: 12, needed: 5},
-			Drone  : {health : 50, hitDamage: 18, needed : 7}
-	}
+	// const beeTypes = {
+	// 		Queen  : {health : 100, hitDamage:7, needed: 3},
+	// 		Worker : {health : 75, hitDamage: 12, needed: 5},
+	// 		Drone  : {health : 50, hitDamage: 18, needed : 7}
+	// }
 
 	// For testing
-	// const beeTypes = {
-	// 		Queen  : {health : 100, hitDamage:100, needed: 1},
-	// 		Worker : {health : 75, hitDamage: 12, needed: 5},
-	// 		Drone  : {health : 50, hitDamage: 1, needed : 5}
-	// }
+	const beeTypes = {
+			Queen  : {health : 100, hitDamage:100, needed: 1},
+			Worker : {health : 75, hitDamage: 75, needed: 1},
+			Drone  : {health : 50, hitDamage: 150, needed : 1}
+	}
 
 	// To hold the swarm
 	let bees = []
@@ -103,10 +103,10 @@
 	function killAllBees(){
 
 		// kill all the bees in the array and set status to dead
-		bees.forEach(function (bee) {
+		for (let bee of bees){
 			bee.health = 0
 			bee.status = "dead"
-		})
+		}
 
 		messageHolder.textContent = 'They all dead, game over'
 		removeClass(messageHolder, 'hide')
