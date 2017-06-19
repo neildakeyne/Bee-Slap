@@ -11,7 +11,7 @@
 	const beeTypes = {
 			Queen  : {health : 100, hitDamage:100, needed: 1},
 			Worker : {health : 75, hitDamage: 75, needed: 1},
-			Drone  : {health : 50, hitDamage: 150, needed : 1}
+			Drone  : {health : 50, hitDamage: 50, needed : 1}
 	}
 
 	// To hold the swarm
@@ -132,9 +132,8 @@
 
 	// Feedback which bee was just slapped
 	function statusUpdate(slappedBee){
-		document.getElementById("js-status-type").textContent = slappedBee.type
-		document.getElementById("js-status-health-lost").textContent = slappedBee.hitDamage
-		document.getElementById("js-status-health-remaining").textContent = slappedBee.health
+		let statusMsg = `<p>A ${slappedBee.type} was slapped and lost ${slappedBee.hitDamage} points. It has ${slappedBee.health} health points remaining.</p>`
+		document.getElementById("js-status").innerHTML = statusMsg
 		removeClass(document.getElementById("js-status"), 'hide')
 	}
 
