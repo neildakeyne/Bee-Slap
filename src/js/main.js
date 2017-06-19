@@ -1,167 +1,180 @@
-// Types of bees
-const beeTypes = {
-		Queen  : {health : 100, hitDamage:7, needed: 3},
-		Worker : {health : 75, hitDamage: 12, needed: 5},
-		Drone  : {health : 50, hitDamage: 18, needed : 7}
-}
+(function(){
 
-// const beeTypes = {
-// 		Queen  : {health : 100, hitDamage:100, needed: 1},
-// 		Worker : {health : 75, hitDamage: 1, needed: 1},
-// 		Drone  : {health : 50, hitDamage: 1, needed : 1}
-// }
-
-
-// To hold the swarm
-let bees = [] 
-
-
-// The basic bee 
-function Bee(type, health, hitDamage) {
-    this.type = type
-    this.health = health
-    this.hitDamage = hitDamage
-    this.status = "alive"
-    this.doDamage = function() {
-    	this.health -= this.hitDamage
-    	if (this.health <= 0 ){
-    		this.status = "dead"
-    		this.health = 0
-    	}
-    }
-}
-
-
-// Set up new bees
-function newBees(){
-	for (const prop in beeTypes) {
-		const thisBee = beeTypes[prop]
-		for (let i = 0; i < thisBee.needed; i++) {
-			bees.push(new Bee (prop, thisBee.health, thisBee.hitDamage))
-		}	
-  	}
-}
-
-
-// Output bees to page
-function outPutHtml(bees){
-	let beeRows = ""
-	for (let i = 0; i < bees.length; i++) {		
-		beeRows +=`<tr><td>${bees[i].type}</td><td>${bees[i].health}</td><td>${bees[i].status}</td><tr>`
+	// Types of bees
+	const beeTypes = {
+			Queen  : {health : 100, hitDamage:7, needed: 3},
+			Worker : {health : 75, hitDamage: 12, needed: 5},
+			Drone  : {health : 50, hitDamage: 18, needed : 7}
 	}
-	document.getElementById("js-bee-rows").innerHTML = beeRows
-}
+
+	// For testing
+	// const beeTypes = {
+	// 		Queen  : {health : 100, hitDamage:1, needed: 2},
+	// 		Worker : {health : 75, hitDamage: 75, needed: 5},
+	// 		Drone  : {health : 50, hitDamage: 50, needed : 5}
+	// }
+
+	// To hold the swarm
+	let bees = []
+
+	// hit button
+	let hitBtn = document.getElementById("js-btn-hit")
+
+	// reset button
+	let resetBtn = document.getElementById('js-btn-reset')
+ 
+ 	// Start the action
+	function init(){
+	    newBees() //set up new bees
+	    outPutHtml(bees)//output html	
+	}
 
 
-// Slap the bee
-function slapThatBee(beeToSlap) {
+	// The basic bee 
+	function Bee(type, health, hitDamage) {
+	    this.type = type
+	    this.health = health
+	    this.hitDamage = hitDamage
+	    this.status = "alive"
+	    this.doDamage = function() {
+	    	this.health -= this.hitDamage
+	    	if (this.health <= 0 ){
+	    		this.status = "dead"
+	    		this.health = 0
+	    	}
+	    }
+	}
 
-	// Check if all the Queens are dead	
-	if (checkQueens() !== beeTypes.Queen.needed){
 
-		let currentBee = bees[beeToSlap]
+	// Set up new bees
+	function newBees(){
+		for (const prop in beeTypes) {
+			const thisBee = beeTypes[prop]
+			for (let i = 0; i < thisBee.needed; i++) {
+				bees.push(new Bee (prop, thisBee.health, thisBee.hitDamage))
+			}	
+	  	}
+	}
 
-		if (currentBee.status === "alive"){
-			currentBee.doDamage()
-			statusUpdate(currentBee)
-			addClass(document.getElementById("js-dead-bee-msg"), 'hide')
+
+	// Output bees to page
+	function outPutHtml(bees){
+		let beeRows = ""
+		for (let i = 0; i < bees.length; i++) {		
+			beeRows +=`<tr><td>${bees[i].type}</td><td>${bees[i].health}</td><td>${bees[i].status}</td><tr>`
+		}
+		document.getElementById("js-bee-rows").innerHTML = beeRows
+	}
+
+
+	// Slap the bee
+	function slapThatBee(beeToSlap) {
+
+		// Check if all the Queens are dead	
+		if (checkQueens() !== beeTypes.Queen.needed){
+
+			let currentBee = bees[beeToSlap]
+
+			if (currentBee.status === "alive"){
+				currentBee.doDamage()
+				statusUpdate(currentBee)
+				addClass(document.getElementById("js-dead-bee-msg"), 'hide')
+			}else{
+				// If bee is dead show msg to slap another
+				removeClass(document.getElementById("js-dead-bee-msg"), 'hide')
+			}
+
+			// check to see if this slap killed the last queen
+			if (checkQueens() === beeTypes.Queen.needed){
+				killAllBees()
+			}
+
 		}else{
-			// If bee is dead show msg to slap another
-			removeClass(document.getElementById("js-dead-bee-msg"), 'hide')
-		}
-
-		// check to see if this slap killed the last queen
-		if (checkQueens() === beeTypes.Queen.needed){
+			//Kill all bees is all queens are dead
 			killAllBees()
+
 		}
 
-	}else{
-
-		//Kill all bees is all queens are dead
-		killAllBees()
-
+		outPutHtml(bees)
 	}
 
-	outPutHtml(bees)
-}
-
-function killAllBees(){
-	for (let i = 0; i < bees.length; i++) {	
-		bees[i].status = "dead"
-	}
-
-	removeClass(document.getElementById("js-dead-bee-msg"), 'hide')
-	document.getElementById("js-dead-bee-msg").textContent = 'They all dead'
-	document.getElementById("js-btn-hit").setAttribute("disabled", "disabled")
-}
-
-
-
-// Check for dead Queens
-function checkQueens(){
-	let deadQueens = 0
-	for (let i = 0; i < bees.length; i++) {
-		if(bees[i].type === "Queen" && bees[i].status === "dead" ){
-			deadQueens ++
+	function killAllBees(){
+		for (let i = 0; i < bees.length; i++) {	
+			bees[i].status = "dead"
 		}
+
+		removeClass(document.getElementById("js-dead-bee-msg"), 'hide')
+		document.getElementById("js-dead-bee-msg").textContent = 'They all dead'
+		document.getElementById("js-btn-hit").setAttribute("disabled", "disabled")
 	}
-	return deadQueens
-}
 
 
-// Feedback which bee was just slapped
-function statusUpdate(slappedBee){
-	document.getElementById("js-status-type").textContent = slappedBee.type
-	document.getElementById("js-status-health-lost").textContent = slappedBee.hitDamage
-	document.getElementById("js-status-health-remaining").textContent = slappedBee.health
-	removeClass(document.getElementById("js-status"), 'hide')
-}
-
-
-// Adding and removing classes
-// From: https://jaketrent.com/post/addremove-classes-raw-javascript/
-function hasClass(el, className) {
-  if (el.classList)
-    return el.classList.contains(className)
-  else
-    return !!el.className.match(new RegExp('(\\s|^)' + className + '(\\s|$)'))
-}
-
-
-function addClass(el, className) {
-  if (el.classList)
-    el.classList.add(className)
-  else if (!hasClass(el, className)) el.className += " " + className
-}
-
-
-function removeClass(el, className) {
-  if (el.classList)
-    el.classList.remove(className)
-  else if (hasClass(el, className)) {
-    var reg = new RegExp('(\\s|^)' + className + '(\\s|$)')
-    el.className=el.className.replace(reg, ' ')
-  }
-}
-
-
-// Slap bee button
- document.getElementById('js-btn-hit').addEventListener('click', e => {
-	let aliveBees = bees.filter(bee => bee.status === 'alive')
-	slapThatBee(Math.floor(Math.random()*aliveBees.length))
- })
-
-
-// Reset button
- document.getElementById('js-btn-reset').addEventListener('click', e => {
-	bees = [] // empty bees array
-	newBees() // new bees please
-	outPutHtml(bees) // reset the stage
-	document.getElementById("js-btn-hit").removeAttribute("disabled")
-	let messages = document.getElementsByClassName("js-msg")
-	for(let i = 0; i < messages.length; i++){
-		messages[i].classList.add("hide")
+	// Check for dead Queens
+	function checkQueens(){
+		let deadQueens = 0
+		for (let i = 0; i < bees.length; i++) {
+			if(bees[i].type === "Queen" && bees[i].status === "dead" ){
+				deadQueens ++
+			}
+		}
+		return deadQueens
 	}
- })
 
 
+	// Feedback which bee was just slapped
+	function statusUpdate(slappedBee){
+		document.getElementById("js-status-type").textContent = slappedBee.type
+		document.getElementById("js-status-health-lost").textContent = slappedBee.hitDamage
+		document.getElementById("js-status-health-remaining").textContent = slappedBee.health
+		removeClass(document.getElementById("js-status"), 'hide')
+	}
+
+
+	// Adding and removing classes
+	// From: https://jaketrent.com/post/addremove-classes-raw-javascript/
+	function hasClass(el, className) {
+	  if (el.classList)
+	    return el.classList.contains(className)
+	  else
+	    return !!el.className.match(new RegExp('(\\s|^)' + className + '(\\s|$)'))
+	}
+
+
+	function addClass(el, className) {
+	  if (el.classList)
+	    el.classList.add(className)
+	  else if (!hasClass(el, className)) el.className += " " + className
+	}
+
+
+	function removeClass(el, className) {
+	  if (el.classList)
+	    el.classList.remove(className)
+	  else if (hasClass(el, className)) {
+	    var reg = new RegExp('(\\s|^)' + className + '(\\s|$)')
+	    el.className=el.className.replace(reg, ' ')
+	  }
+	}
+
+
+	// Slap bee button
+	 hitBtn.addEventListener('click', e => {
+		let aliveBees = bees.filter(bee => bee.status === 'alive')
+		slapThatBee(Math.floor(Math.random()*aliveBees.length))
+	 })
+
+	// Reset button
+	resetBtn.addEventListener('click', e => {
+		bees = [] // empty bees array
+		hitBtn.removeAttribute("disabled")
+		let messages = document.getElementsByClassName("js-msg")
+			for(let i = 0; i < messages.length; i++){
+				addClass(messages[i], 'hide')
+			}
+		init()
+	})
+
+    // Start slapping
+    init()
+
+})();
