@@ -1,15 +1,15 @@
 // Types of bees
-// const beeTypes = {
-// 		Queen  : {health : 100, hitDamage:7, needed: 3},
-// 		Worker : {health : 75, hitDamage: 12, needed: 5},
-// 		Drone  : {health : 50, hitDamage: 18, needed : 7}
-// }
-
 const beeTypes = {
-		Queen  : {health : 100, hitDamage:100, needed: 1},
-		Worker : {health : 75, hitDamage: 1, needed: 1},
-		Drone  : {health : 50, hitDamage: 1, needed : 1}
+		Queen  : {health : 100, hitDamage:7, needed: 3},
+		Worker : {health : 75, hitDamage: 12, needed: 5},
+		Drone  : {health : 50, hitDamage: 18, needed : 7}
 }
+
+// const beeTypes = {
+// 		Queen  : {health : 100, hitDamage:100, needed: 1},
+// 		Worker : {health : 75, hitDamage: 1, needed: 1},
+// 		Drone  : {health : 50, hitDamage: 1, needed : 1}
+// }
 
 
 // To hold the swarm
@@ -56,12 +56,8 @@ function outPutHtml(bees){
 // Slap the bee
 function slapThatBee(beeToSlap) {
 
-	console.log(beeTypes.Queen.needed)
-
 	// Check if all the Queens are dead	
 	if (checkQueens() !== beeTypes.Queen.needed){
-
-		console.log('queens still alive')
 
 		let currentBee = bees[beeToSlap]
 
@@ -74,21 +70,29 @@ function slapThatBee(beeToSlap) {
 			removeClass(document.getElementById("js-dead-bee-msg"), 'hide')
 		}
 
+		// check to see if this slap killed the last queen
+		if (checkQueens() === beeTypes.Queen.needed){
+			killAllBees()
+		}
+
 	}else{
 
-		console.log('queens all dead')
-		// If all the queens are dead, so are the rest
-		for (let i = 0; i < bees.length; i++) {	
-			bees[i].status = "dead"
-		}
-		
-		removeClass(document.getElementById("js-dead-bee-msg"), 'hide')
-		document.getElementById("js-dead-bee-msg").textContent = 'They all dead'
-		document.getElementById("js-btn-hit").setAttribute("disabled", "disabled")
+		//Kill all bees is all queens are dead
+		killAllBees()
 
 	}
 
 	outPutHtml(bees)
+}
+
+function killAllBees(){
+	for (let i = 0; i < bees.length; i++) {	
+		bees[i].status = "dead"
+	}
+
+	removeClass(document.getElementById("js-dead-bee-msg"), 'hide')
+	document.getElementById("js-dead-bee-msg").textContent = 'They all dead'
+	document.getElementById("js-btn-hit").setAttribute("disabled", "disabled")
 }
 
 
