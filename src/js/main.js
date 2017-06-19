@@ -9,20 +9,23 @@
 
 	// For testing
 	// const beeTypes = {
-	// 		Queen  : {health : 100, hitDamage:1, needed: 2},
-	// 		Worker : {health : 75, hitDamage: 75, needed: 5},
-	// 		Drone  : {health : 50, hitDamage: 50, needed : 5}
+	// 		Queen  : {health : 100, hitDamage:100, needed: 1},
+	// 		Worker : {health : 75, hitDamage: 12, needed: 5},
+	// 		Drone  : {health : 50, hitDamage: 1, needed : 5}
 	// }
 
 	// To hold the swarm
 	let bees = []
 
 	// hit button
-	let hitBtn = document.getElementById("js-btn-hit")
+	const hitBtn = document.getElementById("js-btn-hit")
 
 	// reset button
-	let resetBtn = document.getElementById('js-btn-reset')
+	const resetBtn = document.getElementById('js-btn-reset')
  
+	// Message holder
+	let messageHolder = document.getElementById('js-dead-bee-msg')
+
  	// Start the action
 	function init(){
 	    newBees() //set up new bees
@@ -38,6 +41,7 @@
 	    this.status = "alive"
 	    this.doDamage = function() {
 	    	this.health -= this.hitDamage
+	    	//this.health -= this.health
 	    	if (this.health <= 0 ){
 	    		this.status = "dead"
 	    		this.health = 0
@@ -78,10 +82,9 @@
 			if (currentBee.status === "alive"){
 				currentBee.doDamage()
 				statusUpdate(currentBee)
-				addClass(document.getElementById("js-dead-bee-msg"), 'hide')
 			}else{
-				// If bee is dead show msg to slap another
-				removeClass(document.getElementById("js-dead-bee-msg"), 'hide')
+				// If bee is dead pick another random one and run function again
+				slapThatBee(pickRandomBee())
 			}
 
 			// check to see if this slap killed the last queen
@@ -92,20 +95,22 @@
 		}else{
 			//Kill all bees is all queens are dead
 			killAllBees()
-
 		}
 
 		outPutHtml(bees)
 	}
 
 	function killAllBees(){
-		for (let i = 0; i < bees.length; i++) {	
-			bees[i].status = "dead"
-		}
 
-		removeClass(document.getElementById("js-dead-bee-msg"), 'hide')
-		document.getElementById("js-dead-bee-msg").textContent = 'They all dead'
-		document.getElementById("js-btn-hit").setAttribute("disabled", "disabled")
+		// kill all the bees in the array and set status to dead
+		bees.forEach(function (bee) {
+			bee.health = 0
+			bee.status = "dead"
+		})
+
+		messageHolder.textContent = 'They all dead, game over'
+		removeClass(messageHolder, 'hide')
+		hitBtn.setAttribute("disabled", "disabled")
 	}
 
 
@@ -118,6 +123,10 @@
 			}
 		}
 		return deadQueens
+	}
+
+	function pickRandomBee(){
+		return Math.floor(Math.random()*bees.length)
 	}
 
 
@@ -159,8 +168,7 @@
 
 	// Slap bee button
 	 hitBtn.addEventListener('click', e => {
-		let aliveBees = bees.filter(bee => bee.status === 'alive')
-		slapThatBee(Math.floor(Math.random()*aliveBees.length))
+		slapThatBee(pickRandomBee())
 	 })
 
 	// Reset button
