@@ -1,18 +1,18 @@
 (function(){
 
 	// Types of bees
-	// const beeTypes = {
-	// 		Queen  : {health : 100, hitDamage:7, needed: 3},
-	// 		Worker : {health : 75, hitDamage: 12, needed: 5},
-	// 		Drone  : {health : 50, hitDamage: 18, needed : 7}
-	// }
+	const beeTypes = {
+			Queen  : {health : 100, hitDamage:7, needed: 3},
+			Worker : {health : 75, hitDamage: 12, needed: 5},
+			Drone  : {health : 50, hitDamage: 18, needed : 7}
+	}
 
 	// For testing
-	const beeTypes = {
-			Queen  : {health : 100, hitDamage:100, needed: 1},
-			Worker : {health : 75, hitDamage: 75, needed: 1},
-			Drone  : {health : 50, hitDamage: 50, needed : 1}
-	}
+	// const beeTypes = {
+	// 		Queen  : {health : 100, hitDamage:100, needed: 1},
+	// 		Worker : {health : 75, hitDamage: 75, needed: 1},
+	// 		Drone  : {health : 50, hitDamage: 50, needed : 1}
+	// }
 
 	// To hold the swarm
 	let bees = []
